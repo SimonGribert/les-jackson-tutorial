@@ -14,8 +14,8 @@ jobs:
     - name: Build and push image to ACR
       id: build-image
       run: |
-        docker build "$GITHUB_WORKSPACE/PlatformService" -f  "PlatformService/Dockerfile" -t dr4g0n96/platformservice:latest --label dockerfile-path=PlatformService/Dockerfile
-        docker push dr4g0n96/platformservice:latest
+        docker build "$GITHUB_WORKSPACE/PlatformService" -f  "PlatformService/Dockerfile" -t ljservices.azurecr.io/ljservices:${{ github.sha }} --label dockerfile-path=PlatformService/Dockerfile
+        docker push ljservices.azurecr.io/ljservices:${{ github.sha }}
     
     - uses: azure/k8s-set-context@v1
       with:
@@ -44,6 +44,6 @@ jobs:
         manifests: |
           K8S/az-platforms-depl.yaml
         images: |
-          dr4g0n96/platformservice:latest
+          ljservices.azurecr.io/ljservices:${{ github.sha }}
         imagepullsecrets: |
           ljservicesdockerauth

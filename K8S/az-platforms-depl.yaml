@@ -17,7 +17,7 @@ spec:
         kubernetes.io/os: linux
       containers:
         - name: platformservice
-          image: dr4g0n96/platformservice:latest
+          image: ljservices.azurecr.io/ljservices
           ports:
             - containerPort: 80
             - containerPort: 666
