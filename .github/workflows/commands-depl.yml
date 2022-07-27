@@ -42,8 +42,7 @@ jobs:
       with:
         namespace: les-jackson-tutorial
         manifests: |
-          manifests/deployment-1.yml
-          manifests/service-1.yml
+          K8S/az-commands-depl.yaml
         images: |
           ljservices.azurecr.io/ljservices:${{ github.sha }}
         imagepullsecrets: |

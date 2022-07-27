@@ -17,7 +17,7 @@ spec:
         kubernetes.io/os: linux
       containers:
         - name: commandsservice
-          image: dr4g0n96/commandsservice:latest
+          image: ljservices.azurecr.io/ljservices
           ports:
             - containerPort: 80
           resources:
