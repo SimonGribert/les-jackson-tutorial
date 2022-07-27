@@ -1,0 +1,50 @@
+on: [push]
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    
+    - uses: azure/docker-login@v1
+      with:
+        login-server: ljservices.azurecr.io
+        username: ${{ secrets.acr_ljservices_username }}
+        password: ${{ secrets.acr_ljservices_password }}
+    
+    - name: Build and push image to ACR
+      id: build-image
+      run: |
+        docker build "$GITHUB_WORKSPACE/PlatformService" -f  "PlatformService/Dockerfile" -t ljservices.azurecr.io/ljservices:${{ github.sha }} --label dockerfile-path=PlatformService/Dockerfile
+        docker push ljservices.azurecr.io/ljservices:${{ github.sha }}
+    
+    - uses: azure/k8s-set-context@v1
+      with:
+         kubeconfig: ${{ secrets.aks_ljservices_kubeConfig }}
+      id: login
+    
+    - name: Create namespace
+      run: |
+        namespacePresent=`kubectl get namespace | grep les-jackson-tutorial | wc -l`
+        if [ $namespacePresent -eq 0 ]
+        then
+            echo `kubectl create namespace les-jackson-tutorial`
+        fi
+
+    - uses: azure/k8s-create-secret@v1
+      with:
+        namespace: les-jackson-tutorial
+        container-registry-url: ljservices.azurecr.io
+        container-registry-username: ${{ secrets.acr_ljservices_username }}
+        container-registry-password: ${{ secrets.acr_ljservices_password }}
+        secret-name: ljservicesdockerauth
+       
+    - uses: azure/k8s-deploy@v1.2
+      with:
+        namespace: les-jackson-tutorial
+        manifests: |
+          manifests/deployment.yml
+          manifests/service.yml
+        images: |
+          ljservices.azurecr.io/ljservices:${{ github.sha }}
+        imagepullsecrets: |
+          ljservicesdockerauth
