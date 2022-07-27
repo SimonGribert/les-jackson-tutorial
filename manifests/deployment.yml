@@ -1,0 +1,19 @@
+apiVersion : apps/v1
+kind: Deployment
+metadata:
+  name: "ljservices-db88"
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: "ljservices-db88"
+  template:
+    metadata:
+      labels:
+        app: "ljservices-db88"
+    spec:
+      containers:
+        - name: "ljservices-db88"
+          image: "ljservices.azurecr.io/ljservices"
+          ports:
+          - containerPort: 80
