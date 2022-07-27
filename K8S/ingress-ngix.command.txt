@@ -1,0 +1,13 @@
+https://kubernetes.github.io/ingress-nginx/deploy/#quick-start
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.2.1/deploy/static/provider/cloud/deploy.yaml
+
+
+docker build -t dr4g0n96/platformservice .
+docker push dr4g0n96/commandsservice
+docker build -t dr4g0n96/commandsservice .
+docker push dr4g0n96/platformservice
+
+kubectl create secret generic NAME --from-literal=KEY=VALUE
+
+
+kubectl config use-context <CONTEXT NAME>

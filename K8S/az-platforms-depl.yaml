@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: platforms-depl
+  namespace: les-jackson-tutorial
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: platformservice
+  template:
+    metadata:
+      labels:
+        app: platformservice
+    spec:
+      nodeSelector:
+        kubernetes.io/os: linux
+      containers:
+        - name: platformservice
+          image: dr4g0n96/platformservice:latest
+          ports:
+            - containerPort: 80
+            - containerPort: 666
+          resources:
+            requests:
+              cpu: '1'
+              memory: 500Mi
+            limits:
+              cpu: '256'
+              memory: 11400G
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: platforms-clusterip-srv
+  namespace: les-jackson-tutorial
+spec:
+  type: ClusterIP
+  ports:
+    - targetPort: 80
+      name: platformservice
+      port: 80
+      protocol: TCP
+    - targetPort: 666
+      name: platformgrpc
+      port: 666
+      protocol: TCP
+  selector:
+    app: platformservice

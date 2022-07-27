@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: commands-depl
+  namespace: les-jackson-tutorial
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: commandsservice
+  template:
+    metadata:
+      labels:
+        app: commandsservice
+    spec:
+      nodeSelector:
+        kubernetes.io/os: linux
+      containers:
+        - name: commandsservice
+          image: dr4g0n96/commandsservice:latest
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              cpu: '1'
+              memory: 500Mi
+            limits:
+              cpu: '256'
+              memory: 11400G
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: commands-clusterip-srv
+  namespace: les-jackson-tutorial
+spec:
+  type: ClusterIP
+  selector:
+    app: commandsservice
+  ports:
+  - name: commandsservice
+    protocol: TCP
+    port: 80
+    targetPort: 80
